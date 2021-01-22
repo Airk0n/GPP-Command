@@ -7,12 +7,14 @@ public class GState_PlaceYourPiece : IState
     private Board _board;
     private Piece _piece;
     private Commander _commander;
+    private PiecePool _piecePool;
 
-    public GState_PlaceYourPiece(Board board, Piece piece, Commander commander)
+    public GState_PlaceYourPiece(Board board, Piece piece, Commander commander, PiecePool pool)
     {
         _board = board;
         _piece = piece;
         _commander = commander;
+        _piecePool = pool;
     }
     public void OnEnter()
     {
@@ -39,12 +41,8 @@ public class GState_PlaceYourPiece : IState
 			Debug.Log("Square occupied already");
         else
         {
-            _commander.PlacePiece(boardSquare, _piece);
+            _commander.Command(_piecePool,_board, boardSquare, _piece, CommandType.Place);
         }				
-
-
-
-				
 
 	}
 

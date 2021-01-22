@@ -4,13 +4,12 @@ public class Piece : MonoBehaviour
 {
 	private Renderer modelMaterial;
 
-	public bool isPlayer1;
-
 	private Vector3 startPosition;
 	private Vector3 endPosition;
 	private float speed;
 	public bool isMoving;
 	private float interpolateValue;
+	public BoardSquare CurrentSquare;
 
 
 	private void Awake()

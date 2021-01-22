@@ -7,23 +7,42 @@ public class Command_PlacePiece : ICommand
     private Board _board;
     private BoardSquare _boardSquare;
     private Piece _piece;
-    public CommandType type = CommandType.Place;
+    private PiecePool _piecePool;
+    private int _pieceID;
+    private bool _IDSet;
+    CommandType ICommand.type => CommandType.Place;
 
-
-    public Command_PlacePiece(Board board, BoardSquare boardSquare, Piece piece)
+    public Command_PlacePiece(PiecePool piecePool,Board board,BoardSquare boardSquare)
     {
-        this._board = board;
-        this._boardSquare = boardSquare;
-        this._piece = piece;
+        _piecePool = piecePool;
+        _board = board;
+        _boardSquare = boardSquare;
+
+
     }
 
     public void Execute()
     {
-        this._board.PlacePiece(this._boardSquare, this._piece);
+        if(_IDSet)
+        {
+            _board.PlacePiece(_boardSquare, _piece, _pieceID);
+            _boardSquare.CurrentPiece.CurrentSquare = _boardSquare;
+        }
+        else
+        {
+            _pieceID = _piecePool.GetNextKey();
+            _piece = _piecePool.FindPiece(_pieceID);
+            _board.PlacePiece(_boardSquare, _piece, _pieceID);
+            _boardSquare.CurrentPiece.CurrentSquare = _boardSquare;
+            _IDSet = true;
+        }
+
     }
 
     public void Undo()
     {
-        this._boardSquare.DestroyAndNullMyPiece();
+        _piece.gameObject.SetActive(false);
+        _boardSquare.NullMyPiece();
+
     }
 }

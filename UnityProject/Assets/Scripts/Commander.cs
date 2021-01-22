@@ -8,99 +8,124 @@ public class Commander : MonoBehaviour
     //Holds a record of actions.
     //Holds methods of moving back and forth through actions.
 
-    private Dictionary<int, ICommand> commandSequence = new Dictionary<int, ICommand>();
-    [SerializeField] private int currentStep = 0;
-    [SerializeField] private int undoStep = 0;
-    [SerializeField] private int commandSequenceLength;
-    [SerializeField] private Board _board;
+    public Dictionary<int, ICommand> CommandSequence = new Dictionary<int, ICommand>();
+    [SerializeField] private int _currentStep = 0;
+    [SerializeField] private int _undoStep = 0;
+    [SerializeField] private int commandSequenceLength; // for debug
     [SerializeField] private bool _upToDate = true;
+    [SerializeField] private UICommandList _uiCommandList;
 
-    public void UpToDate()
+    private void Start()
     {
-        undoStep = currentStep;
+        UpdateSequence();
+    }
+
+    private void Update()
+    {
+        commandSequenceLength = CommandSequence.Count;
+        _uiCommandList.CommanderStatus(_currentStep, _undoStep, _upToDate);
+    }
+
+
+    public void UpdateSequence()
+    {
+        _undoStep = _currentStep;
         _upToDate = true;
-
-        // Here I clear the undo log after this point.
-        if(commandSequence.Count > (currentStep-1))
-        {
-            for (int i = currentStep; i < commandSequence.Count; i++)
-            {
-                commandSequence.Remove(i);
-            }
-        }
-        commandSequenceLength = commandSequence.Count;
-
     }
 
-    public void ClearSequenceAfterCurrentStep()
-    {
-        if (commandSequence.Count > (currentStep - 1))
-        {
-            for (int i = currentStep; i < commandSequence.Count; i++)
-            {
-                commandSequence.Remove(i);
-            }
-        }
-    }
+
+
+
 
     public void Undo()
     {
-        if(currentStep == 0 || undoStep == 0)
+        if(_currentStep == 0 || _undoStep == 0)
         {
             return;
         }
 
-        if (currentStep == undoStep)
+        if (_currentStep == _undoStep)
         {
-            commandSequence[currentStep-1].Undo();
+            CommandSequence[_currentStep-1].Undo();
         } 
         else
         {
-            commandSequence[undoStep-1].Undo();
+            CommandSequence[_undoStep-1].Undo();
         }
 
-        if(undoStep > 0)
+        if(_undoStep > 0)
         {
-            undoStep--;
+            _undoStep--;
         }
         _upToDate = false;
     }
 
     public void Redo()
     {
-        if(undoStep == currentStep)
+        if(_undoStep == _currentStep)
         {
             return;
         }
 
-        commandSequence[undoStep].Execute();
-        undoStep++;
-        _upToDate = false;
+        CommandSequence[_undoStep].Execute();
+        _undoStep++;
+
+        if(_undoStep != _currentStep)
+        {
+            _upToDate = false;
+        }
+
+        if(_undoStep == _currentStep)
+        {
+            UpdateSequence();
+        }
+
+
     }
 
-    public void PlacePiece(BoardSquare boardSquare, Piece piece)
+    public void Command(PiecePool piecePool, Board board, BoardSquare boardSquare, Piece piece, CommandType type)
     {
-        if(_upToDate)
+        ICommand commandToExecute = new Command_MovePiece(piece, boardSquare); // just a default value
+        switch (type)
         {
-            var commandObject = new Command_PlacePiece(_board, boardSquare, piece);
-            commandObject.Execute();
-            commandSequence.Add(currentStep, commandObject);
-            currentStep++;
-            UpToDate();
-        }
-        else
-        {
-            currentStep = undoStep;
-            ClearSequenceAfterCurrentStep();
-            var commandObject = new Command_PlacePiece(_board, boardSquare, piece);
-            commandObject.Execute();
-            commandSequence.Add(currentStep, commandObject);
-            currentStep++;
-            UpToDate();
+            case CommandType.Move :
+                commandToExecute = new Command_MovePiece(piece, boardSquare);
+                break;
+            case CommandType.Place:
+                commandToExecute = new Command_PlacePiece(piecePool,board,boardSquare);
+                break;
         }
 
+
+        if(_upToDate) // as in, we haven't been using the undo function.
+        {
+            CommandSequence.Add(_currentStep, commandToExecute);
+            commandToExecute.Execute();
+            _uiCommandList.AddToList(commandToExecute);
+            _currentStep++;
+            UpdateSequence();
+        }
+        else  // if we are at an undo point we have to clear our redo history and continue from this point.
+        {
+            ClearSequenceAfterUndoStep();
+            CommandSequence.Add(_undoStep, commandToExecute);
+            commandToExecute.Execute();
+            _uiCommandList.AddToList(commandToExecute);
+            _currentStep = _undoStep;
+            _currentStep++;
+            UpdateSequence();
+        }
 
     }
+    public void ClearSequenceAfterUndoStep()
+    {
+        _uiCommandList.NewPath(_undoStep);
+        for (int i = _undoStep; i <= _currentStep; i++)
+        {
+            CommandSequence.Remove(i);
+        }
+    }
+
 
 
 

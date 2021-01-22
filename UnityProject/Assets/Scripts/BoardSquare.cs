@@ -19,10 +19,8 @@ public class BoardSquare : MonoBehaviour, IPointerClickHandler
 	/// Returns whether the board square currently has a piece
 	/// </summary>
 	public bool HasPiece => CurrentPiece != null;
-	public void DestroyAndNullMyPiece()
+	public void NullMyPiece()
     {
-		Destroy(CurrentPiece.gameObject);
-		Destroy(CurrentPiece);
 		CurrentPiece = null;
     }
 

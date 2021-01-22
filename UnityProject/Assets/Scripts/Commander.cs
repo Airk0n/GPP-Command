@@ -26,16 +26,11 @@ public class Commander : MonoBehaviour
         _uiCommandList.CommanderStatus(_currentStep, _undoStep, _upToDate);
     }
 
-
     public void UpdateSequence()
     {
         _undoStep = _currentStep;
         _upToDate = true;
     }
-
-
-
-
 
     public void Undo()
     {
@@ -101,7 +96,7 @@ public class Commander : MonoBehaviour
         {
             CommandSequence.Add(_currentStep, commandToExecute);
             commandToExecute.Execute();
-            _uiCommandList.AddToList(commandToExecute);
+            _uiCommandList.AddToList(commandToExecute, this);
             _currentStep++;
             UpdateSequence();
         }
@@ -110,7 +105,7 @@ public class Commander : MonoBehaviour
             ClearSequenceAfterUndoStep();
             CommandSequence.Add(_undoStep, commandToExecute);
             commandToExecute.Execute();
-            _uiCommandList.AddToList(commandToExecute);
+            _uiCommandList.AddToList(commandToExecute, this);
             _currentStep = _undoStep;
             _currentStep++;
             UpdateSequence();
@@ -126,6 +121,32 @@ public class Commander : MonoBehaviour
         }
     }
 
+    public void JumpTo(int undoStep)
+    {
+        int difference = _undoStep - undoStep;
+        if(difference == 0)
+        {
+            return;
+        }
+
+        if(difference < 0)
+        {
+            int diffAsPositiveNumber = Mathf.Abs(difference);
+            for (int i = 0; i < diffAsPositiveNumber; i++)
+            {
+                Redo();
+            }
+        }
+        if (difference > 0)
+        {
+            for (int i = 0; i < difference; i++)
+            {
+                Undo();
+            }
+        }
+
+
+    }
 
 
 

@@ -55,10 +55,10 @@ public class UICommandList : MonoBehaviour
     }
 
 
-    public void AddToList(ICommand command)
+    public void AddToList(ICommand command, Commander commander)
     {
         UIAction newAction = Instantiate(prefab, this.transform);
-        newAction.Initialize(command, _actionList.Count + 1);
+        newAction.Initialize(command, _actionList.Count + 1, commander);
         _actionList.Add(newAction);
 
     }

@@ -5,23 +5,33 @@ using UnityEngine.UI;
 
 public class UIAction : MonoBehaviour
 {
-    [SerializeField]private Text text;
-    [SerializeField]private Image highLight;
+    [SerializeField]private Text _text;
+    [SerializeField]private Image _highLight;
+    private int _location;
+    private Commander _commander;
+    
 
-    public void Initialize (ICommand command, int location)
+    public void Initialize (ICommand command, int location, Commander commander)
     {
-        text = GetComponentInChildren<Text>();
-        text.text = (location.ToString() + "  |  " + command.type.ToString());
+        _text = GetComponentInChildren<Text>();
+        _text.text = (location.ToString() + "  |  " + command.type.ToString());
+        _location = location;
+        _commander = commander;
 
     }
 
     public void Select()
     {
-        highLight.gameObject.SetActive(true);
+        _highLight.gameObject.SetActive(true);
     }
     public void DeSelect()
     {
-        highLight.gameObject.SetActive(false);
+        _highLight.gameObject.SetActive(false);
+    }
+
+    public void JumpTo()
+    {
+        _commander.JumpTo(_location);
     }
 
 }

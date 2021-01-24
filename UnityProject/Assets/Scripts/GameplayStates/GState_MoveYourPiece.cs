@@ -19,7 +19,7 @@ public class GState_MoveYourPiece : IState
     public void OnEnter()
     {
         SelectedPieceOnEnter();
-        BoardSquare.SquareClicked += SelectMove;
+        BoardSquare.SquareClicked += MoveSelected;
     }
 
     public void SelectedPieceOnEnter()
@@ -29,7 +29,7 @@ public class GState_MoveYourPiece : IState
 
     public void OnExit()
     {
-        BoardSquare.SquareClicked -= SelectMove;
+        BoardSquare.SquareClicked -= MoveSelected;
     }
 
     public void Tick()
@@ -37,7 +37,9 @@ public class GState_MoveYourPiece : IState
         
     }
 
-    public void SelectMove(BoardSquare boardSquare, int xBoardPos, int zBoardPos)
+    // Originally i was considering the ability to click to select pieces, deselect and move. 
+    // However to keep the scope down for a personal project. The last piece placed is selected.
+    public void MoveSelected(BoardSquare boardSquare, int xBoardPos, int zBoardPos)
     {
         if(boardSquare.CurrentPiece != _selectedPiece && !boardSquare.HasPiece)
         {
@@ -45,15 +47,6 @@ public class GState_MoveYourPiece : IState
         }
     }
 
-    public void Select()
-    {
-
-    }
-
-    public void Move()
-    {
-
-    }
 
 
 }

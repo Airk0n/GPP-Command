@@ -92,7 +92,7 @@ public class Commander : MonoBehaviour
         }
 
 
-        if(_upToDate) // as in, we haven't been using the undo function.
+        if(_upToDate) // UpToDate means we are not in an undo state.
         {
             CommandSequence.Add(_currentStep, commandToExecute);
             commandToExecute.Execute();
@@ -100,7 +100,7 @@ public class Commander : MonoBehaviour
             _currentStep++;
             UpdateSequence();
         }
-        else  // if we are at an undo point we have to clear our redo history and continue from this point.
+        else  // If we are in an Undo state then we need to clear the undo history before moving on.
         {
             ClearSequenceAfterUndoStep();
             CommandSequence.Add(_undoStep, commandToExecute);

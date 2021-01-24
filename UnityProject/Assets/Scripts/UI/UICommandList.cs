@@ -5,8 +5,14 @@ using UnityEngine;
 
 public class UICommandList : MonoBehaviour
 {
+    /* Purpose:
+     * To manage the list of UI Action elements. 
+     * This operates similarly to the commander except it deals with UI elements instead of the actual commands.
+     */
+
     [SerializeField]private List<UIAction> _actionList = new List<UIAction>();
     [SerializeField]private UIAction prefab;
+
     private int _currentStep;
     private int _undoStep;
     private bool _upToDate;

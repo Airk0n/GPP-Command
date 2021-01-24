@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Command_MovePiece : ICommand
 {
+    /* Purpose:
+     * To handle the moving of a piece, to tell the appropriate boardsquares which piece they 
+     * have and to perform this operation in revers onUndo.
+     */
     private BoardSquare _fromSquare;
     private BoardSquare _currentSquare;
     private Piece _piece;

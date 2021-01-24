@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class PiecePool : MonoBehaviour
 {
+    /*Purpose:
+     * To manage and instaiate pieces as requested by the user. 
+     * Each piece is given a unique key upon creation, this couples it to the specific command and allows the move command to access it correctly.
+     * Currently the maximum pieces is 25 however if this bigger I would consider a different implementation to reduce memory usage.
+     */
     [SerializeField] private Piece _piecePrefab;
-    private Dictionary<int, Piece> _piecePool = new Dictionary<int, Piece>();
     [SerializeField] private int _piecePoolLen;
+    private Dictionary<int, Piece> _piecePool = new Dictionary<int, Piece>();
 
     private void Update()
     {
@@ -31,11 +36,6 @@ public class PiecePool : MonoBehaviour
             return newPiece;
         }
         return null;
-    }
-
-    private void AddPieceToPool(int key)
-    {
-
     }
 
     public void ReturnPieceToPool(int key)

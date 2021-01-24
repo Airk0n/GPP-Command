@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Command_PlacePiece : ICommand
 {
+    /* Purpose :
+     * To find a piece from the piece pool, remember which piece it is, and place it on the board. Undo is just hiding it.
+     */
     private Board _board;
     private BoardSquare _boardSquare;
     private Piece _piece;

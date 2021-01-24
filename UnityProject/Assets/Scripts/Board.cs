@@ -7,23 +7,24 @@ public partial class Board : MonoBehaviour
 {
     public int XLength;
     public int ZLength;
-	private List<Piece> pieceStorage = new List<Piece>();
 	public BoardSquare[,] Spaces { get; set; }
 	public Piece lastPlacedPiece;
+
+	private List<Piece> pieceStorage = new List<Piece>();
 	private List<BoardSquare> boardSquareStorage = new List<BoardSquare>();
-	[SerializeField]private PiecePool _piecePool;
 	private GameObject PiecesGroup;
 	private Piece _piecePrefab;
 
-	public void GivePiece (Piece prefab)
+	[SerializeField] private PiecePool _piecePool;
+
+	public void GivePiece (Piece prefab) // I could call this initialise but it only needs to do one thing.
     {
 		_piecePrefab = prefab;
 
 	}
 	public void Start()
 	{
-		PiecesGroup = new GameObject("PiecesGroup");
-
+		PiecesGroup = new GameObject("PiecesGroup"); // this purely keeps the heirachy organised in Unity.
 	}
 	public void ClearBoard()
 	{
@@ -42,7 +43,6 @@ public partial class Board : MonoBehaviour
 
 		boardSquareStorage.Clear();
 	}
-
 	public void SetSpace(int x, int z)
     {
         this.Spaces = new BoardSquare[x, z];
@@ -65,19 +65,17 @@ public partial class Board : MonoBehaviour
 		if (boardSquare.HasPiece)
 			return;
 
-		Piece newPiece = _piecePool.FindPiece(pieceID);
 		Vector3 newPos = new Vector3(boardSquare.transform.position.x, 0f, boardSquare.transform.position.z);
+
+		Piece newPiece = _piecePool.FindPiece(pieceID);
 		newPiece.gameObject.SetActive(true);
 		newPiece.transform.position = newPos;
 		newPiece.transform.rotation = Quaternion.identity;
 		newPiece.transform.parent = PiecesGroup.transform;
+
 		boardSquare.ApplyPiece(newPiece);
 		pieceStorage.Add(newPiece);
 		lastPlacedPiece = newPiece;
 	}
 
-	public void ReturnPiece(BoardSquare boardSquare, int pieceID)
-    {
-		//_piecePool.ReturnPieceToPool(boardSquare.CurrentPiece);
-    }
 }
